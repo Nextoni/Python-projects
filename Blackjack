@@ -1,0 +1,72 @@
+import random
+
+logo = r"""
+.------.            _     _            _    _            _    
+|A_  _ |.          | |   | |          | |  (_)          | |   
+|( \/ ).-----.     | |__ | | __ _  ___| | ___  __ _  ___| | __
+| \  /|K /\  |     | '_ \| |/ _` |/ __| |/ / |/ _` |/ __| |/ /
+|  \/ | /  \ |     | |_) | | (_| | (__|   <| | (_| | (__|   < 
+`-----| \  / |     |_.__/|_|\__,_|\___|_|\_\ |\__,_|\___|_|\_\\
+      |  \/ K|                            _/ |                
+      `------'                           |__/           
+"""
+
+def blackjack():
+    cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+
+    dealer = []
+    user = []
+
+    for card in range(2):
+        dealer.append(random.choice(cards))
+        user.append(random.choice(cards))
+
+    print("\n" * 20)
+    print(logo)
+    print(f"The dealer's card is {dealer[0]}\nYour cards are {user} = {sum(user)}")
+
+    do_continue = True
+    while do_continue:
+
+        choice = input('Do you wish to "hit" or "stand"? ')
+
+        if choice == "hit":
+            user.append(random.choice(cards))
+
+            while sum(user) > 21 and 11 in user:
+                user[user.index(11)] = 1
+
+            if sum(user) > 21:
+                do_continue = False
+
+            print(f"\nThe dealer's card is {dealer[0]}\nYour cards are {user} = {sum(user)}\n")
+
+        else:
+            do_continue = False
+
+    while sum(dealer) < 18:
+        dealer.append(random.choice(cards))
+
+        while sum(dealer) > 21 and 11 in dealer:
+            dealer[dealer.index(11)] = 1
+
+        if sum(dealer) > 21:
+            do_continue = False
+
+    if sum(dealer) == sum(user) or sum(dealer) > 21 and sum(user) > 21:
+        print(f"The dealer's cards are {dealer} = {sum(dealer)}\nYour cards are {user} = {sum(user)}\nIt's a draw!")
+    elif sum(dealer) <= 21 < sum(user):
+        print(f"The dealer's cards are {dealer} = {sum(dealer)}\nYour cards are {user} = {sum(user)}\nThe dealer wins!")
+    elif sum(user) <= 21 < sum(dealer):
+        print(f"The dealer's cards are {dealer} = {sum(dealer)}\nYour cards are {user} = {sum(user)}\nYou win!")
+    elif sum(user) <= 21 >= sum(dealer):
+        if sum(user) > sum(dealer):
+            print(f"The dealer's cards are {dealer} = {sum(dealer)}\nYour cards are {user} = {sum(user)}\nYou win!")
+        else:
+            print(f"The dealer's cards are {dealer} = {sum(dealer)}\nYour cards are {user} = {sum(user)}\nThe dealer wins!")
+
+    game = input('\nDo you want to play again? "yes" or "no"\n')
+    if game == "yes":
+        blackjack()
+
+blackjack()
