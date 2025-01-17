@@ -1,0 +1,22 @@
+import random
+
+def Number_guessing():
+    number = random.randint(0, 100)
+    print("I'm thinking of a number between 0 and 100.")
+
+    difficulty = int(input("Choose a difficulty.\nType 0 for 'easy', 1 for 'hard' or 2 for 'impossible': "))
+    difficulty_num = [10, 5, 2]
+
+    for i in range(difficulty_num[difficulty]):
+        print(f"You have {difficulty_num[difficulty] - i} attempts remaining.")
+        guess = int(input("What is your number? "))
+        if guess == number:
+            print("You win!")
+            return
+        elif guess < number:
+            print("Too low!")
+        else:
+            print("Too high!")
+    print(f"\nThe number was {number}.\nYou lose!")
+
+Number_guessing()
