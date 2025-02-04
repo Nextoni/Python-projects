@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 from random import randint, choice, shuffle
 import pyperclip
+import json
 
 
 def generate_password():
@@ -29,17 +30,52 @@ def save_to_file():
     website = input_website.get()
     email = input_email.get()
     password = input_pass.get()
+    new_data = {
+        website : {
+            "email" : email,
+            "password" : password,
+        }
+    }
 
-    if website and password and email:
-        is_ok = messagebox.askokcancel(title= website, message= f"These are the details entered: \nEmail: {email} "
-                                                        f"\n Password: {password} \nIs it ok to save?")
-        if is_ok:
-            with open("data.txt", "a") as d:
-                d.write(f"{website} | {email} | {password}\n")
+    if len(website) == 0 or len(password) == 0 or len(email) == 0:
+        messagebox.showinfo(title= "Oops", message= "Please fill in the boxes!")
+
+    else:
+        try:
+            with open("data.json", "r") as data_file:
+                data = json.load(data_file)
+
+        except FileNotFoundError:
+            with open("data.json", "w") as data_file:
+                json.dump(new_data, data_file, indent= 4)
+
+        else:
+            data.update(new_data)
+
+            with open("data.json", "w") as data_file:
+                json.dump(data, data_file, indent= 4)
+
+        finally:
             input_website.delete(0, END)
             input_pass.delete(0, END)
+
+def search():
+    website = input_website.get()
+
+    try:
+        with open("data.json") as data_file:
+            data = json.load(data_file)
+
+    except FileNotFoundError:
+        messagebox.showinfo(title= "No data!", text= "No Data File Found.")
+
     else:
-        messagebox.showinfo(title= "Oops", message= "Please fill in the boxes!")
+        if website in data:
+            messagebox.showinfo(title= "Found a match", message= f"Website: {website}\n"
+                                                                 f"Email: {data[website]["email"]}\n"
+                                                                 f"Password: {data[website]["password"]}")
+        else:
+            messagebox.showinfo(title= "No match", message= f"No details for the {website} exists.")
 
 
 window = Tk()
@@ -60,12 +96,12 @@ email_label.grid(column= 0, row= 2)
 pass_label = Label(text= "Password:")
 pass_label.grid(column= 0, row= 3)
 
-input_website = Entry(width= 46)
-input_website.grid(column= 1, row= 1, columnspan= 2)
+input_website = Entry(width= 27)
+input_website.grid(column= 1, row= 1)
 input_website.focus()
 
-input_email = Entry(width= 46)
-input_email.grid(column= 1, row= 2, columnspan= 2)
+input_email = Entry(width= 27)
+input_email.grid(column= 1, row= 2)
 input_email.insert(0, "some@gmail.com")
 
 input_pass = Entry(width= 27)
@@ -76,5 +112,8 @@ generate_pass_button.grid(column= 2, row= 3)
 
 add_button = Button(text= "Add", width= 36, command= save_to_file)
 add_button.grid(column= 1, row= 4, columnspan= 2)
+
+search_button = Button(text= "Search", width= 14, command= search)
+search_button.grid(column= 2, row= 1)
 
 window.mainloop()
